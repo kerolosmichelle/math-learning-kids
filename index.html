@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Magic Kingdom - Learn Addition & Subtraction</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts: Fredoka for rounded, cheerful typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Fredoka', cursive, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Custom Kid-Friendly Animations */
+        @keyframes bounce-gentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes pulse-grow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+
+        @keyframes popOut {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4) rotate(15deg); opacity: 0.8; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        .animate-bounce-gentle {
+            animation: bounce-gentle 2.5s infinite ease-in-out;
+        }
+
+        .animate-wiggle {
+            animation: wiggle 0.6s infinite ease-in-out;
+        }
+
+        .animate-pulse-grow {
+            animation: pulse-grow 2s infinite ease-in-out;
+        }
+
+        .popped {
+            animation: popOut 0.4s forwards ease-out;
+            pointer-events: none;
+        }
+
+        /* 3D Dynamic Buttons with Depth */
+        .btn-3d {
+            transition: all 0.1s ease;
+            position: relative;
+            top: 0;
+        }
+        .btn-3d:active {
+            top: 4px;
+            box-shadow: none !important;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-amber-100 via-pink-100 to-sky-100 min-h-screen text-slate-800 flex flex-col justify-between overflow-x-hidden selection:bg-pink-300">
+
+    <!-- TOP HEADER / NAVBAR -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b-4 border-yellow-300 shadow-lg px-4 py-3">
+        <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            
+            <!-- Logo & Mascot -->
+            <div onclick="switchTab('home')" class="cursor-pointer flex items-center space-x-2 group">
+                <span class="text-4xl transform group-hover:scale-125 transition-transform duration-300">🏰</span>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 bg-clip-text text-transparent drop-shadow-sm">
+                        Math Kingdom
+                    </h1>
+                    <p class="text-xs font-semibold text-pink-500 tracking-wide">Fun Addition & Subtraction!</p>
+                </div>
+            </div>
+
+            <!-- Gamification & Settings Controls -->
+            <div class="flex items-center space-x-3">
+                <!-- Stars Counter Badge -->
+                <div id="starBadge" class="flex items-center bg-yellow-300 border-2 border-yellow-500 text-yellow-900 px-3 py-1.5 rounded-full shadow-[0_4px_0_#d97706] font-bold text-lg animate-pulse-grow">
+                    <span class="text-2xl mr-1">⭐</span>
+                    <span id="starCount">0</span>
+                </div>
+
+                <!-- Speech Voice Toggle Button -->
+                <button id="voiceToggleBtn" onclick="toggleVoice()" title="Toggle Voice Reader"
+                        class="btn-3d bg-sky-400 hover:bg-sky-500 text-white p-2.5 rounded-2xl border-b-4 border-sky-600 shadow-md flex items-center justify-center text-xl">
+                    🔊
+                </button>
+
+                <!-- Sound FX Toggle Button -->
+                <button id="soundToggleBtn" onclick="toggleSound()" title="Toggle Sound Effects"
+                        class="btn-3d bg-emerald-400 hover:bg-emerald-500 text-white p-2.5 rounded-2xl border-b-4 border-emerald-600 shadow-md flex items-center justify-center text-xl">
+                    🎵
+                </button>
+            </div>
+        </div>
+
+        <!-- MAIN NAVIGATION TABS -->
+        <nav class="max-w-4xl mx-auto mt-3">
+            <div class="grid grid-cols-5 gap-1 md:gap-3 bg-white/70 p-1.5 rounded-2xl shadow-inner border border-purple-100">
+                <button onclick="switchTab('home')" id="tab-home"
+                        class="nav-tab text-xs sm:text-base font-bold py-2 px-1 sm:px-3 rounded-xl transition-all duration-200 flex flex-col sm:flex-row items-center justify-center gap-1 text-slate-600 hover:bg-pink-100">
+                    <span class="text-lg sm:text-xl">🏠</span> <span>Home</span>
+                </button>
+                <button onclick="switchTab('addition')" id="tab-addition"
+                        class="nav-tab text-xs sm:text-base font-bold py-2 px-1 sm:px-3 rounded-xl transition-all duration-200 flex flex-col sm:flex-row items-center justify-center gap-1 text-slate-600 hover:bg-sky-100">
+                    <span class="text-lg sm:text-xl">➕</span> <span>Addition</span>
+                </button>
+                <button onclick="switchTab('subtraction')" id="tab-subtraction"
+                        class="nav-tab text-xs sm:text-base font-bold py-2 px-1 sm:px-3 rounded-xl transition-all duration-200 flex flex-col sm:flex-row items-center justify-center gap-1 text-slate-600 hover:bg-rose-100">
+                    <span class="text-lg sm:text-xl">➖</span> <span>Subtract</span>
+                </button>
+                <button onclick="switchTab('quiz')" id="tab-quiz"
+                        class="nav-tab text-xs sm:text-base font-bold py-2 px-1 sm:px-3 rounded-xl transition-all duration-200 flex flex-col sm:flex-row items-center justify-center gap-1 text-slate-600 hover:bg-yellow-100">
+                    <span class="text-lg sm:text-xl">🎮</span> <span>Game</span>
+                </button>
+                <button onclick="switchTab('playground')" id="tab-playground"
+                        class="nav-tab text-xs sm:text-base font-bold py-2 px-1 sm:px-3 rounded-xl transition-all duration-200 flex flex-col sm:flex-row items-center justify-center gap-1 text-slate-600 hover:bg-emerald-100">
+                    <span class="text-lg sm:text-xl">🎨</span> <span>Play Area</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="max-w-5xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- ================= PAGE 1: HOME ================= -->
+        <section id="page-home" class="tab-content space-y-8">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 rounded-3xl p-6 md:p-10 text-white shadow-xl relative overflow-hidden text-center md:text-left flex flex-col md:flex-row items-center justify-between border-4 border-white">
+                <div class="z-10 space-y-4 max-w-lg">
+                    <span class="bg-yellow-300 text-yellow-900 text-sm font-extrabold px-4 py-1.5 rounded-full inline-block shadow-sm animate-bounce-gentle">
+                        ✨ Welcome Little Mathematician!
+                    </span>
+                    <h2 class="text-3xl sm:text-5xl font-black leading-tight drop-shadow-md">
+                        Math is Super Fun & Easy!
+                    </h2>
+                    <p class="text-base sm:text-lg font-medium text-purple-100">
+                        Join our cute animal friends to explore numbers, count delicious snacks, pop balloons, and win golden stars!
+                    </p>
+                    <div class="flex flex-wrap gap-3 justify-center md:justify-start pt-2">
+                        <button onclick="switchTab('addition')" class="btn-3d bg-yellow-400 hover:bg-yellow-300 text-yellow-950 font-extrabold px-6 py-3 rounded-2xl shadow-[0_6px_0_#d97706] text-lg flex items-center gap-2">
+                            <span>🚀 Start Learning</span>
+                        </button>
+                        <button onclick="switchTab('quiz')" class="btn-3d bg-emerald-400 hover:bg-emerald-300 text-emerald-950 font-extrabold px-6 py-3 rounded-2xl shadow-[0_6px_0_#059669] text-lg flex items-center gap-2">
+                            <span>🎮 Play Game</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Animated Mascot Floating -->
+                <div class="mt-6 md:mt-0 relative z-10 flex flex-col items-center">
+                    <div class="text-8xl md:text-9xl filter drop-shadow-2xl animate-bounce-gentle transform hover:scale-110 transition-transform cursor-pointer" onclick="speak('Hi there! I am Barnaby the Math Bunny! Let us learn math together!')">
+                        🐰
+                    </div>
+                    <div class="bg-white text-purple-900 font-bold px-4 py-2 rounded-2xl shadow-lg mt-2 text-sm border-2 border-purple-200 animate-wiggle">
+                        Tap me to say Hi! 👋
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Navigation Feature Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <!-- Addition Card -->
+                <div onclick="switchTab('addition')" class="btn-3d bg-sky-50 hover:bg-sky-100 border-4 border-sky-300 rounded-3xl p-5 shadow-[0_8px_0_#7dd3fc] cursor-pointer flex flex-col items-center text-center space-y-3 group">
+                    <div class="text-6xl group-hover:scale-125 transition-transform">➕</div>
+                    <h3 class="text-2xl font-black text-sky-700">Learn Addition</h3>
+                    <p class="text-sm text-sky-800">Put things together to get bigger numbers!</p>
+                    <span class="bg-sky-500 text-white px-4 py-1.5 rounded-xl font-bold text-xs uppercase tracking-wider">Explore 🍎</span>
+                </div>
+
+                <!-- Subtraction Card -->
+                <div onclick="switchTab('subtraction')" class="btn-3d bg-rose-50 hover:bg-rose-100 border-4 border-rose-300 rounded-3xl p-5 shadow-[0_8px_0_#fda4af] cursor-pointer flex flex-col items-center text-center space-y-3 group">
+                    <div class="text-6xl group-hover:scale-125 transition-transform">➖</div>
+                    <h3 class="text-2xl font-black text-rose-700">Learn Subtraction</h3>
+                    <p class="text-sm text-rose-800">Take away items and see how many remain!</p>
+                    <span class="bg-rose-500 text-white px-4 py-1.5 rounded-xl font-bold text-xs uppercase tracking-wider">Pop Balloons 🎈</span>
+                </div>
+
+                <!-- Practice Quiz Card -->
+                <div onclick="switchTab('quiz')" class="btn-3d bg-amber-50 hover:bg-amber-100 border-4 border-amber-300 rounded-3xl p-5 shadow-[0_8px_0_#fcd34d] cursor-pointer flex flex-col items-center text-center space-y-3 group">
+                    <div class="text-6xl group-hover:scale-125 transition-transform">🎮</div>
+                    <h3 class="text-2xl font-black text-amber-700">Math Quiz</h3>
+                    <p class="text-sm text-amber-800">Answer fun questions and collect golden stars!</p>
+                    <span class="bg-amber-500 text-white px-4 py-1.5 rounded-xl font-bold text-xs uppercase tracking-wider">Win Stars ⭐</span>
+                </div>
+
+                <!-- Math Playground Card -->
+                <div onclick="switchTab('playground')" class="btn-3d bg-emerald-50 hover:bg-emerald-100 border-4 border-emerald-300 rounded-3xl p-5 shadow-[0_8px_0_#6ee7b7] cursor-pointer flex flex-col items-center text-center space-y-3 group">
+                    <div class="text-6xl group-hover:scale-125 transition-transform">🎨</div>
+                    <h3 class="text-2xl font-black text-emerald-700">Math Playroom</h3>
+                    <p class="text-sm text-emerald-800">Free hands-on visual counter with cute toys!</p>
+                    <span class="bg-emerald-500 text-white px-4 py-1.5 rounded-xl font-bold text-xs uppercase tracking-wider">Free Play 🧸</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 2: LEARN ADDITION ================= -->
+        <section id="page-addition" class="tab-content hidden space-y-6">
+            <!-- Header Explanation -->
+            <div class="bg-sky-500 text-white rounded-3xl p-6 shadow-lg border-4 border-sky-300 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="space-y-2 text-center md:text-left">
+                    <div class="inline-flex items-center gap-2 bg-sky-700 text-sky-100 px-3 py-1 rounded-full text-sm font-bold">
+                        <span>➕ Addition Concept</span>
+                    </div>
+                    <h2 class="text-3xl font-black">What is Addition?</h2>
+                    <p class="text-sky-100 text-base md:text-lg max-w-2xl">
+                        Addition means <strong>putting things together</strong> to make a bigger group! The plus sign <span class="bg-white text-sky-600 px-2 py-0.5 rounded-lg font-black">+</span> means <em>"add"</em>.
+                    </p>
+                </div>
+                <button onclick="speak('Addition is putting things together to make a bigger group!')" 
+                        class="btn-3d bg-yellow-400 text-yellow-950 font-black px-4 py-3 rounded-2xl shadow-[0_4px_0_#d97706] whitespace-nowrap flex items-center gap-2">
+                    🔊 Listen Explanation
+                </button>
+            </div>
+
+            <!-- Interactive Visual Lesson 1: Apples Step-by-Step -->
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-sky-100 space-y-6">
+                <div class="flex items-center justify-between border-b-2 border-sky-100 pb-3">
+                    <h3 class="text-2xl font-bold text-sky-800 flex items-center gap-2">
+                        <span>🍎 Interactive Example: 3 + 2 = 5</span>
+                    </h3>
+                    <span class="text-xs bg-sky-100 text-sky-700 font-extrabold px-3 py-1 rounded-full">Tap items to count!</span>
+                </div>
+
+                <!-- Equation Visual Boxes -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center text-center">
+                    
+                    <!-- Group A (3 items) -->
+                    <div class="bg-sky-50 rounded-2xl p-4 border-2 border-dashed border-sky-300 flex flex-col items-center">
+                        <span class="text-sm font-bold text-sky-600 mb-2">Group 1 (3 Red Apples)</span>
+                        <div class="flex flex-wrap justify-center gap-2 text-4xl sm:text-5xl">
+                            <span onclick="countItem(this, 1)" class="cursor-pointer transform hover:scale-125 transition-transform filter drop-shadow">🍎</span>
+                            <span onclick="countItem(this, 2)" class="cursor-pointer transform hover:scale-125 transition-transform filter drop-shadow">🍎</span>
+                            <span onclick="countItem(this, 3)" class="cursor-pointer transform hover:scale-125 transition-transform filter drop-shadow">🍎</span>
+                        </div>
+                        <span class="text-2xl font-black text-sky-700 mt-2">3</span>
+                    </div>
+
+                    <!-- Plus Sign -->
+                    <div class="text-5xl font-black text-sky-500 my-1 md:my-0 animate-bounce-gentle">
+                        +
+                    </div>
+
+                    <!-- Group B (2 items) -->
+                    <div class="bg-indigo-50 rounded-2xl p-4 border-2 border-dashed border-indigo-300 flex flex-col items-center">
+                        <span class="text-sm font-bold text-indigo-600 mb-2">Group 2 (2 Red Apples)</span>
+                        <div class="flex flex-wrap justify-center gap-2 text-4xl sm:text-5xl">
+                            <span onclick="countItem(this, 4)" class="cursor-pointer transform hover:scale-125 transition-transform filter drop-shadow">🍎</span>
+                            <span onclick="countItem(this, 5)" class="cursor-pointer transform hover:scale-125 transition-transform filter drop-shadow">🍎</span>
+                        </div>
+                        <span class="text-2xl font-black text-indigo-700 mt-2">2</span>
+                    </div>
+
+                    <!-- Equals Sign -->
+                    <div class="text-5xl font-black text-purple-500 my-1 md:my-0">
+                        =
+                    </div>
+
+                    <!-- Total Result Box -->
+                    <div class="bg-emerald-50 rounded-2xl p-4 border-2 border-emerald-300 flex flex-col items-center shadow-md">
+                        <span class="text-sm font-bold text-emerald-600 mb-2">Total Together</span>
+                        <div class="text-5xl font-black text-emerald-600 my-1 animate-pulse-grow">
+                            5
+                        </div>
+                        <button onclick="speak('3 plus 2 equals 5!')" class="btn-3d bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-xl text-xs mt-2 shadow-[0_3px_0_#047857]">
+                            🔊 Read "3 + 2 = 5"
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 p-4 rounded-2xl border-2 border-amber-200 text-amber-900 flex items-center gap-3">
+                    <span class="text-3xl">💡</span>
+                    <p class="text-sm font-medium">
+                        <strong>Counting Tip:</strong> Count Group 1 first (1, 2, 3), then keep counting into Group 2 (4, 5)! You get 5 altogether!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Dynamic Addition Generator Widget -->
+            <div class="bg-gradient-to-r from-sky-100 to-indigo-100 rounded-3xl p-6 border-4 border-sky-200 space-y-4">
+                <h3 class="text-2xl font-black text-sky-900 flex items-center gap-2">
+                    <span>🎛️ Try Your Own Addition Problem!</span>
+                </h3>
+
+                <!-- Controls -->
+                <div class="flex flex-wrap gap-4 items-center justify-center bg-white p-4 rounded-2xl shadow-sm">
+                    <div class="flex items-center space-x-2">
+                        <label class="font-bold text-sky-800">First Number:</label>
+                        <select id="addNum1" onchange="updateAdditionDemo()" class="bg-sky-50 border-2 border-sky-300 font-black text-sky-800 rounded-xl px-3 py-2 text-lg focus:outline-none">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3" selected>3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+
+                    <span class="text-2xl font-black text-sky-500">+</span>
+
+                    <div class="flex items-center space-x-2">
+                        <label class="font-bold text-sky-800">Second Number:</label>
+                        <select id="addNum2" onchange="updateAdditionDemo()" class="bg-sky-50 border-2 border-sky-300 font-black text-sky-800 rounded-xl px-3 py-2 text-lg focus:outline-none">
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <label class="font-bold text-sky-800">Pick Object:</label>
+                        <select id="addEmoji" onchange="updateAdditionDemo()" class="bg-sky-50 border-2 border-sky-300 font-black text-sky-800 rounded-xl px-3 py-2 text-lg focus:outline-none">
+                            <option value="🚗">🚗 Cars</option>
+                            <option value="⭐">⭐ Stars</option>
+                            <option value="🧸">🧸 Bears</option>
+                            <option value="🍦">🍦 Ice Creams</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Dynamic Live Visual Demo Area -->
+                <div id="addDemoDisplay" class="bg-white rounded-2xl p-6 border-2 border-sky-200 text-center space-y-4">
+                    <!-- JS injects dynamic elements here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 3: LEARN SUBTRACTION ================= -->
+        <section id="page-subtraction" class="tab-content hidden space-y-6">
+            <!-- Header Explanation -->
+            <div class="bg-rose-500 text-white rounded-3xl p-6 shadow-lg border-4 border-rose-300 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="space-y-2 text-center md:text-left">
+                    <div class="inline-flex items-center gap-2 bg-rose-700 text-rose-100 px-3 py-1 rounded-full text-sm font-bold">
+                        <span>➖ Subtraction Concept</span>
+                    </div>
+                    <h2 class="text-3xl font-black">What is Subtraction?</h2>
+                    <p class="text-rose-100 text-base md:text-lg max-w-2xl">
+                        Subtraction means <strong>taking away items</strong> from a group to see how many are left! The minus sign <span class="bg-white text-rose-600 px-2 py-0.5 rounded-lg font-black">-</span> means <em>"take away"</em>.
+                    </p>
+                </div>
+                <button onclick="speak('Subtraction is taking away things to see how many are left!')" 
+                        class="btn-3d bg-yellow-400 text-yellow-950 font-black px-4 py-3 rounded-2xl shadow-[0_4px_0_#d97706] whitespace-nowrap flex items-center gap-2">
+                    🔊 Listen Explanation
+                </button>
+            </div>
+
+            <!-- Interactive Visual Lesson: Pop the Balloons -->
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-rose-100 space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-rose-100 pb-3 gap-2">
+                    <div>
+                        <h3 class="text-2xl font-bold text-rose-800 flex items-center gap-2">
+                            <span>🎈 Interactive Example: Pop Balloons to Subtract!</span>
+                        </h3>
+                        <p class="text-sm text-slate-500">Start with 5 balloons. Click balloons to POP them!</p>
+                    </div>
+                    <button onclick="resetBalloonDemo()" class="btn-3d bg-rose-100 text-rose-700 font-bold px-3 py-1.5 rounded-xl border border-rose-300 text-sm hover:bg-rose-200">
+                        🔄 Reset Balloons
+                    </button>
+                </div>
+
+                <!-- Interactive Balloon Sandbox -->
+                <div class="bg-gradient-to-b from-sky-100 to-indigo-50 rounded-2xl p-6 text-center space-y-6 border-2 border-sky-200">
+                    <!-- Balloon Row -->
+                    <div id="balloonContainer" class="flex flex-wrap justify-center gap-4 min-h-[100px] items-center">
+                        <!-- Pop-able balloons injected via JS -->
+                    </div>
+
+                    <!-- Live Calculation Indicator -->
+                    <div class="bg-white/90 backdrop-blur inline-flex flex-wrap items-center justify-center gap-3 px-6 py-3 rounded-2xl border-2 border-rose-300 shadow-md">
+                        <span class="text-2xl font-bold text-slate-600">Start: <span class="text-rose-600 font-black">5</span></span>
+                        <span class="text-2xl font-black text-rose-500">-</span>
+                        <span class="text-2xl font-bold text-slate-600">Popped: <span id="poppedCount" class="text-rose-600 font-black">0</span></span>
+                        <span class="text-2xl font-black text-purple-500">=</span>
+                        <span class="text-3xl font-black text-emerald-600">Left: <span id="remainingCount" class="text-emerald-600">5</span></span>
+                    </div>
+
+                    <div class="text-center">
+                        <button id="readSubBtn" onclick="speakBalloonEquation()" class="btn-3d bg-rose-500 text-white font-bold px-5 py-2.5 rounded-xl shadow-[0_4px_0_#be123c] text-sm">
+                            🔊 Read Equation Out Loud
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cookie Monster Snack Time Example -->
+            <div class="bg-amber-50 rounded-3xl p-6 border-4 border-amber-200 space-y-4">
+                <h3 class="text-2xl font-black text-amber-900 flex items-center gap-2">
+                    <span>🍪 Cookie Snack Story: 6 - 2 = 4</span>
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center items-center">
+                    <div class="bg-white p-4 rounded-2xl border-2 border-amber-200">
+                        <span class="block text-sm font-bold text-amber-700">1. You have 6 yummy cookies</span>
+                        <div class="text-4xl my-2">🍪🍪🍪🍪🍪🍪</div>
+                        <span class="text-2xl font-black text-amber-800">6</span>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl border-2 border-amber-200">
+                        <span class="block text-sm font-bold text-rose-600">2. A friendly puppy eats 2 cookies 🐶</span>
+                        <div class="text-4xl my-2">❌❌</div>
+                        <span class="text-2xl font-black text-rose-600">- 2</span>
+                    </div>
+
+                    <div class="bg-emerald-50 p-4 rounded-2xl border-2 border-emerald-300">
+                        <span class="block text-sm font-bold text-emerald-700">3. You have 4 cookies left!</span>
+                        <div class="text-4xl my-2">🍪🍪🍪🍪</div>
+                        <span class="text-2xl font-black text-emerald-700">= 4</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 4: PRACTICE QUIZ / MINI-GAME ================= -->
+        <section id="page-quiz" class="tab-content hidden space-y-6">
+            <!-- Game Banner & Controls -->
+            <div class="bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-400 text-yellow-950 rounded-3xl p-6 shadow-lg border-4 border-yellow-300 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <span class="bg-white/80 text-amber-900 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
+                        🎯 Math Challenge Game
+                    </span>
+                    <h2 class="text-3xl font-black mt-1">Solve & Earn Stars!</h2>
+                    <p class="text-amber-900/90 text-sm font-medium">Count visual items if you need help calculating!</p>
+                </div>
+
+                <!-- Game Mode Selectors -->
+                <div class="flex flex-wrap gap-2 items-center bg-white/60 p-2 rounded-2xl">
+                    <select id="quizType" onchange="generateQuizQuestion()" class="bg-white border-2 border-amber-300 font-bold text-amber-900 rounded-xl px-3 py-1.5 text-sm">
+                        <option value="addition">➕ Addition Only</option>
+                        <option value="subtraction">➖ Subtraction Only</option>
+                        <option value="mixed" selected>🔀 Mixed Math</option>
+                    </select>
+
+                    <select id="quizMax" onchange="generateQuizQuestion()" class="bg-white border-2 border-amber-300 font-bold text-amber-900 rounded-xl px-3 py-1.5 text-sm">
+                        <option value="10" selected>Numbers 1 to 10</option>
+                        <option value="20">Numbers 1 to 20</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Quiz Main Card -->
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl border-4 border-amber-100 space-y-6 text-center max-w-2xl mx-auto relative">
+                
+                <!-- Streak Badge -->
+                <div class="flex items-center justify-between border-b-2 border-slate-100 pb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">🔥</span>
+                        <span class="font-black text-slate-700">Streak: <span id="streakCount" class="text-amber-500">0</span></span>
+                    </div>
+                    <button onclick="readQuizQuestion()" class="btn-3d bg-sky-400 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 shadow-[0_3px_0_#0284c7]">
+                        🔊 Read Question
+                    </button>
+                </div>
+
+                <!-- Equation Display -->
+                <div class="space-y-4">
+                    <div class="text-4xl sm:text-6xl font-black text-slate-800 tracking-wider my-2 flex items-center justify-center gap-3">
+                        <span id="quizNum1" class="text-sky-600">4</span>
+                        <span id="quizOperator" class="text-purple-600">+</span>
+                        <span id="quizNum2" class="text-indigo-600">3</span>
+                        <span class="text-slate-400">=</span>
+                        <span class="text-yellow-500 bg-yellow-100 px-4 py-1 rounded-2xl border-2 border-dashed border-yellow-400">?</span>
+                    </div>
+
+                    <!-- Visual Helper Box (Render visual items corresponding to numbers) -->
+                    <div class="bg-slate-50 rounded-2xl p-4 border-2 border-slate-200">
+                        <span class="text-xs font-bold text-slate-500 block mb-2">👇 Tap objects to visually count:</span>
+                        <div id="quizVisualAid" class="flex flex-wrap justify-center items-center gap-3 text-3xl sm:text-4xl min-h-[50px]">
+                            <!-- Visual items rendered via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Multiple Choice Answers Grid -->
+                <div id="quizOptions" class="grid grid-cols-2 gap-4 pt-2">
+                    <!-- Option buttons dynamically generated by JS -->
+                </div>
+
+                <!-- Feedback Message Overlay / Banner -->
+                <div id="quizFeedback" class="hidden p-4 rounded-2xl font-black text-lg transition-all animate-bounce-gentle">
+                    <!-- Dynamic feedback injected here -->
+                </div>
+
+                <!-- Next Question Button -->
+                <button id="nextQuestionBtn" onclick="generateQuizQuestion()" class="hidden w-full btn-3d bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3.5 rounded-2xl shadow-[0_6px_0_#047857] text-lg">
+                    Next Question ➡️
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 5: MATH PLAYGROUND ================= -->
+        <section id="page-playground" class="tab-content hidden space-y-6">
+            <!-- Header Explanation -->
+            <div class="bg-emerald-500 text-white rounded-3xl p-6 shadow-lg border-4 border-emerald-300 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                    <span class="bg-emerald-700 text-emerald-100 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
+                        🎨 Hands-On Laboratory
+                    </span>
+                    <h2 class="text-3xl font-black mt-1">Interactive Math Playground</h2>
+                    <p class="text-emerald-100 text-sm md:text-base">Build your own problems by tapping buttons to add or remove toys!</p>
+                </div>
+
+                <!-- Object Selector -->
+                <div class="flex items-center gap-2 bg-white/20 p-2 rounded-2xl backdrop-blur">
+                    <span class="text-sm font-bold">Pick Toy:</span>
+                    <select id="playgroundToy" onchange="renderPlayground()" class="bg-white border-2 border-emerald-300 font-black text-emerald-900 rounded-xl px-3 py-1.5 text-base">
+                        <option value="🍎">🍎 Apples</option>
+                        <option value="⭐">⭐ Stars</option>
+                        <option value="🧸">🧸 Bears</option>
+                        <option value="🚗">🚗 Cars</option>
+                        <option value="🍦">🍦 Ice Creams</option>
+                        <option value="🐶">🐶 Puppies</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Dual Workspace Boxes -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Box A -->
+                <div class="bg-white rounded-3xl p-6 shadow-lg border-4 border-sky-200 space-y-4 text-center">
+                    <div class="flex items-center justify-between border-b-2 border-sky-100 pb-2">
+                        <h3 class="font-extrabold text-sky-800 text-xl">Box A</h3>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="changePlaygroundCount('A', -1)" class="btn-3d bg-rose-400 text-white font-black w-8 h-8 rounded-xl shadow-[0_3px_0_#be123c] text-lg flex items-center justify-center">-</button>
+                            <span id="playCountA" class="font-black text-2xl text-sky-700 w-8">3</span>
+                            <button onclick="changePlaygroundCount('A', 1)" class="btn-3d bg-emerald-400 text-white font-black w-8 h-8 rounded-xl shadow-[0_3px_0_#047857] text-lg flex items-center justify-center">+</button>
+                        </div>
+                    </div>
+                    <div id="playBoxA" class="bg-sky-50 rounded-2xl p-4 min-h-[120px] flex flex-wrap items-center justify-center gap-2 text-4xl border-2 border-dashed border-sky-300">
+                        <!-- Toys injected via JS -->
+                    </div>
+                </div>
+
+                <!-- Box B -->
+                <div class="bg-white rounded-3xl p-6 shadow-lg border-4 border-indigo-200 space-y-4 text-center">
+                    <div class="flex items-center justify-between border-b-2 border-indigo-100 pb-2">
+                        <h3 class="font-extrabold text-indigo-800 text-xl">Box B</h3>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="changePlaygroundCount('B', -1)" class="btn-3d bg-rose-400 text-white font-black w-8 h-8 rounded-xl shadow-[0_3px_0_#be123c] text-lg flex items-center justify-center">-</button>
+                            <span id="playCountB" class="font-black text-2xl text-indigo-700 w-8">2</span>
+                            <button onclick="changePlaygroundCount('B', 1)" class="btn-3d bg-emerald-400 text-white font-black w-8 h-8 rounded-xl shadow-[0_3px_0_#047857] text-lg flex items-center justify-center">+</button>
+                        </div>
+                    </div>
+                    <div id="playBoxB" class="bg-indigo-50 rounded-2xl p-4 min-h-[120px] flex flex-wrap items-center justify-center gap-2 text-4xl border-2 border-dashed border-indigo-300">
+                        <!-- Toys injected via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Playground Dynamic Output Banner -->
+            <div class="bg-gradient-to-r from-emerald-100 via-teal-100 to-cyan-100 rounded-3xl p-6 border-4 border-emerald-300 text-center space-y-4 shadow-md">
+                <h4 class="text-lg font-bold text-emerald-900">Live Math Equations Generated:</h4>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Addition Equation -->
+                    <div class="bg-white p-4 rounded-2xl border-2 border-emerald-200 shadow-sm flex flex-col items-center justify-center">
+                        <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">Addition Equation</span>
+                        <div class="text-2xl md:text-3xl font-black text-slate-800">
+                            <span id="playAddEq">3 + 2 = 5</span>
+                        </div>
+                        <button onclick="speakPlaygroundEquation('add')" class="btn-3d bg-emerald-500 text-white font-bold px-4 py-1.5 rounded-xl text-xs mt-2 shadow-[0_3px_0_#047857] flex items-center gap-1">
+                            🔊 Read Addition
+                        </button>
+                    </div>
+
+                    <!-- Subtraction Equation -->
+                    <div class="bg-white p-4 rounded-2xl border-2 border-rose-200 shadow-sm flex flex-col items-center justify-center">
+                        <span class="text-xs font-bold text-rose-600 uppercase tracking-wider mb-1">Subtraction Equation</span>
+                        <div class="text-2xl md:text-3xl font-black text-slate-800">
+                            <span id="playSubEq">5 - 2 = 3</span>
+                        </div>
+                        <button onclick="speakPlaygroundEquation('sub')" class="btn-3d bg-rose-500 text-white font-bold px-4 py-1.5 rounded-xl text-xs mt-2 shadow-[0_3px_0_#be123c] flex items-center gap-1">
+                            🔊 Read Subtraction
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white/80 backdrop-blur border-t-2 border-purple-100 py-4 px-4 text-center text-xs font-semibold text-slate-500">
+        <p>✨ Math Magic Kingdom — Made with ❤️ for Curious Young Minds ✨</p>
+    </footer>
+
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* ================= STATE MANAGEMENT ================= */
+        const state = {
+            stars: 0,
+            soundEnabled: true,
+            voiceEnabled: true,
+            currentTab: 'home',
+            // Balloon demo state
+            balloonTotal: 5,
+            balloonPopped: 0,
+            // Quiz state
+            quiz: {
+                num1: 0,
+                num2: 0,
+                op: '+',
+                correct: 0,
+                streak: 0,
+                answered: false
+            },
+            // Playground state
+            playground: {
+                countA: 3,
+                countB: 2
+            }
+        };
+
+        /* ================= AUDIO SYNTHESIZER (Web Audio API) ================= */
+        // Create Web Audio context lazily on user interaction
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        // Play Synthesized Sounds
+        function playSound(type) {
+            if (!state.soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                const now = ctx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } 
+                else if (type === 'pop') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.linearRampToValueAtTime(100, now + 0.12);
+                    gain.gain.setValueAtTime(0.5, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } 
+                else if (type === 'correct') {
+                    // Play cheerful arpeggio chord
+                    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                    notes.forEach((freq, index) => {
+                        const noteOsc = ctx.createOscillator();
+                        const noteGain = ctx.createGain();
+                        noteOsc.type = 'sine';
+                        noteOsc.frequency.setValueAtTime(freq, now + index * 0.08);
+                        noteGain.gain.setValueAtTime(0.25, now + index * 0.08);
+                        noteGain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.08 + 0.25);
+                        noteOsc.connect(noteGain);
+                        noteGain.connect(ctx.destination);
+                        noteOsc.start(now + index * 0.08);
+                        noteOsc.stop(now + index * 0.08 + 0.25);
+                    });
+                } 
+                else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.linearRampToValueAtTime(140, now + 0.25);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                }
+            } catch (e) {
+                console.log("Audio play error:", e);
+            }
+        }
+
+        /* ================= SPEECH SYNTHESIS (Web Speech API) ================= */
+        function speak(text) {
+            if (!state.voiceEnabled) return;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop active speech
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9;  // Slightly slower for young kids
+                utterance.pitch = 1.15; // Friendly tone
+                utterance.lang = 'en-US';
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function toggleVoice() {
+            state.voiceEnabled = !state.voiceEnabled;
+            const btn = document.getElementById('voiceToggleBtn');
+            if (state.voiceEnabled) {
+                btn.classList.remove('bg-gray-400', 'border-gray-600');
+                btn.classList.add('bg-sky-400', 'border-sky-600');
+                btn.innerText = '🔊';
+                speak("Voice turned on!");
+            } else {
+                btn.classList.remove('bg-sky-400', 'border-sky-600');
+                btn.classList.add('bg-gray-400', 'border-gray-600');
+                btn.innerText = '🔇';
+            }
+        }
+
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            const btn = document.getElementById('soundToggleBtn');
+            if (state.soundEnabled) {
+                btn.classList.remove('bg-gray-400', 'border-gray-600');
+                btn.classList.add('bg-emerald-400', 'border-emerald-600');
+                btn.innerText = '🎵';
+                playSound('click');
+            } else {
+                btn.classList.remove('bg-emerald-400', 'border-emerald-600');
+                btn.classList.add('bg-gray-400', 'border-gray-600');
+                btn.innerText = '🔇';
+            }
+        }
+
+        /* ================= NAVIGATION SYSTEM ================= */
+        function switchTab(tabId) {
+            playSound('click');
+            state.currentTab = tabId;
+
+            // Hide all tab content
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            // Unselect all tab buttons
+            document.querySelectorAll('.nav-tab').forEach(el => {
+                el.classList.remove('bg-white', 'shadow-md', 'text-purple-700', 'scale-105');
+                el.classList.add('text-slate-600');
+            });
+
+            // Show selected tab content
+            const activePage = document.getElementById(`page-${tabId}`);
+            if (activePage) activePage.classList.remove('hidden');
+
+            // Highlight active tab button
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-white', 'shadow-md', 'text-purple-700', 'scale-105');
+                activeBtn.classList.remove('text-slate-600');
+            }
+
+            // Tab specific initializations
+            if (tabId === 'addition') {
+                updateAdditionDemo();
+                speak("Learn Addition!");
+            } else if (tabId === 'subtraction') {
+                resetBalloonDemo();
+                speak("Learn Subtraction!");
+            } else if (tabId === 'quiz') {
+                generateQuizQuestion();
+            } else if (tabId === 'playground') {
+                renderPlayground();
+                speak("Math Playroom!");
+            } else if (tabId === 'home') {
+                speak("Welcome to Math Magic Kingdom!");
+            }
+        }
+
+        /* ================= GAMIFICATION / STARS ================= */
+        function addStars(amount) {
+            state.stars += amount;
+            const starCountEl = document.getElementById('starCount');
+            const starBadge = document.getElementById('starBadge');
+            
+            starCountEl.innerText = state.stars;
+            
+            // Pop animation on star badge
+            starBadge.classList.add('scale-125');
+            setTimeout(() => starBadge.classList.remove('scale-125'), 300);
+
+            // Confetti effect!
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 50,
+                    spread: 60,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        /* ================= LESSON 1: ADDITION LOGIC ================= */
+        function countItem(element, number) {
+            playSound('click');
+            element.classList.add('scale-150');
+            setTimeout(() => element.classList.remove('scale-150'), 200);
+            speak(number.toString());
+        }
+
+        function updateAdditionDemo() {
+            const num1 = parseInt(document.getElementById('addNum1').value);
+            const num2 = parseInt(document.getElementById('addNum2').value);
+            const emoji = document.getElementById('addEmoji').value;
+            const display = document.getElementById('addDemoDisplay');
+
+            const total = num1 + num2;
+
+            let group1Html = '';
+            for (let i = 1; i <= num1; i++) {
+                group1Html += `<span onclick="countItem(this, ${i})" class="cursor-pointer transform hover:scale-125 transition-transform filter drop-shadow">${emoji}</span> `;
+            }
+
+            let group2Html = '';
+            for (let i = 1; i <= num2; i++) {
+                group2Html += `<span onclick="countItem(this, ${num1 + i})" class="cursor-pointer transform hover:scale-125 transition-transform filter drop-shadow">${emoji}</span> `;
+            }
+
+            display.innerHTML = `
+                <div class="flex flex-wrap items-center justify-center gap-4 text-3xl sm:text-4xl">
+                    <div class="bg-sky-50 px-4 py-3 rounded-2xl border border-sky-200">
+                        <div>${group1Html}</div>
+                        <span class="text-xl font-black text-sky-700">${num1}</span>
+                    </div>
+                    <span class="text-4xl font-black text-sky-500">+</span>
+                    <div class="bg-indigo-50 px-4 py-3 rounded-2xl border border-indigo-200">
+                        <div>${group2Html}</div>
+                        <span class="text-xl font-black text-indigo-700">${num2}</span>
+                    </div>
+                    <span class="text-4xl font-black text-purple-500">=</span>
+                    <div class="bg-emerald-100 px-5 py-3 rounded-2xl border-2 border-emerald-400">
+                        <span class="text-4xl font-black text-emerald-700">${total}</span>
+                    </div>
+                </div>
+                <button onclick="speak('${num1} plus ${num2} equals ${total}')" class="btn-3d bg-sky-500 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-[0_3px_0_#0369a1]">
+                    🔊 Listen "${num1} + ${num2} = ${total}"
+                </button>
+            `;
+        }
+
+        /* ================= LESSON 2: SUBTRACTION LOGIC ================= */
+        function resetBalloonDemo() {
+            state.balloonTotal = 5;
+            state.balloonPopped = 0;
+            renderBalloons();
+        }
+
+        function renderBalloons() {
+            const container = document.getElementById('balloonContainer');
+            container.innerHTML = '';
+
+            const balloonColors = ['🎈', '🎈', '🎈', '🎈', '🎈'];
+
+            balloonColors.forEach((b, index) => {
+                const isPopped = index < state.balloonPopped;
+                const el = document.createElement('div');
+                el.className = 'text-5xl sm:text-6xl cursor-pointer transition-all duration-300 transform hover:scale-110';
+                
+                if (isPopped) {
+                    el.innerHTML = '<span class="opacity-30 filter grayscale">💥</span>';
+                } else {
+                    el.innerHTML = b;
+                    el.onclick = () => popBalloon(index);
+                }
+                container.appendChild(el);
+            });
+
+            document.getElementById('poppedCount').innerText = state.balloonPopped;
+            document.getElementById('remainingCount').innerText = state.balloonTotal - state.balloonPopped;
+        }
+
+        function popBalloon(index) {
+            if (state.balloonPopped < state.balloonTotal) {
+                playSound('pop');
+                state.balloonPopped++;
+                renderBalloons();
+                const remaining = state.balloonTotal - state.balloonPopped;
+                speak(`Popped! ${remaining} left!`);
+            }
+        }
+
+        function speakBalloonEquation() {
+            const left = state.balloonTotal - state.balloonPopped;
+            speak(`5 balloons minus ${state.balloonPopped} popped balloons equals ${left} balloons left!`);
+        }
+
+        /* ================= PRACTICE QUIZ MINI-GAME LOGIC ================= */
+        function generateQuizQuestion() {
+            state.quiz.answered = false;
+            
+            const type = document.getElementById('quizType').value;
+            const max = parseInt(document.getElementById('quizMax').value);
+
+            let op = '+';
+            if (type === 'addition') op = '+';
+            else if (type === 'subtraction') op = '-';
+            else op = Math.random() > 0.5 ? '+' : '-';
+
+            let n1 = Math.floor(Math.random() * (max - 1)) + 1;
+            let n2 = Math.floor(Math.random() * (max - 1)) + 1;
+
+            // Ensure non-negative results for subtraction
+            if (op === '-' && n1 < n2) {
+                let temp = n1;
+                n1 = n2;
+                n2 = temp;
+            }
+
+            const correct = op === '+' ? n1 + n2 : n1 - n2;
+
+            state.quiz.num1 = n1;
+            state.quiz.num2 = n2;
+            state.quiz.op = op;
+            state.quiz.correct = correct;
+
+            // DOM elements update
+            document.getElementById('quizNum1').innerText = n1;
+            document.getElementById('quizNum2').innerText = n2;
+            document.getElementById('quizOperator').innerText = op;
+
+            // Render visual aids
+            renderQuizVisualAid(n1, n2, op);
+
+            // Generate Multiple Choice Options
+            const options = new Set([correct]);
+            while (options.size < 4) {
+                let delta = (Math.floor(Math.random() * 5) + 1) * (Math.random() > 0.5 ? 1 : -1);
+                let wrong = correct + delta;
+                if (wrong >= 0 && wrong <= max * 2) {
+                    options.add(wrong);
+                }
+            }
+
+            const shuffledOptions = Array.from(options).sort(() => Math.random() - 0.5);
+
+            const optionsGrid = document.getElementById('quizOptions');
+            optionsGrid.innerHTML = '';
+
+            const btnColors = [
+                'bg-sky-400 hover:bg-sky-500 border-sky-600 shadow-[0_6px_0_#0284c7]',
+                'bg-rose-400 hover:bg-rose-500 border-rose-600 shadow-[0_6px_0_#e11d48]',
+                'bg-amber-400 hover:bg-amber-500 border-amber-600 shadow-[0_6px_0_#d97706]',
+                'bg-emerald-400 hover:bg-emerald-500 border-emerald-600 shadow-[0_6px_0_#059669]'
+            ];
+
+            shuffledOptions.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `btn-3d text-white font-black text-3xl py-4 rounded-2xl border-b-4 ${btnColors[idx % 4]}`;
+                btn.innerText = opt;
+                btn.onclick = () => checkQuizAnswer(opt);
+                optionsGrid.appendChild(btn);
+            });
+
+            // Hide feedback and next button
+            document.getElementById('quizFeedback').classList.add('hidden');
+            document.getElementById('nextQuestionBtn').classList.add('hidden');
+
+            readQuizQuestion();
+        }
+
+        function renderQuizVisualAid(n1, n2, op) {
+            const visualAid = document.getElementById('quizVisualAid');
+            const toyList = ['🍎', '⭐', '🚗', '🧸', '🍦', '🎈'];
+            const toy = toyList[Math.floor(Math.random() * toyList.length)];
+
+            if (op === '+') {
+                let html = '<div class="flex items-center gap-1 bg-sky-100 p-2 rounded-xl">';
+                for (let i = 0; i < n1; i++) html += `<span>${toy}</span>`;
+                html += `</div><span class="font-black text-sky-600">+</span><div class="flex items-center gap-1 bg-indigo-100 p-2 rounded-xl">`;
+                for (let i = 0; i < n2; i++) html += `<span>${toy}</span>`;
+                html += '</div>';
+                visualAid.innerHTML = html;
+            } else {
+                let html = '<div class="flex items-center gap-1 bg-rose-100 p-2 rounded-xl">';
+                for (let i = 0; i < n1; i++) {
+                    if (i >= n1 - n2) {
+                        html += `<span class="opacity-30 line-through filter grayscale">${toy}</span>`;
+                    } else {
+                        html += `<span>${toy}</span>`;
+                    }
+                }
+                html += '</div>';
+                visualAid.innerHTML = html;
+            }
+        }
+
+        function readQuizQuestion() {
+            const qText = state.quiz.op === '+' 
+                ? `What is ${state.quiz.num1} plus ${state.quiz.num2}?`
+                : `What is ${state.quiz.num1} minus ${state.quiz.num2}?`;
+            speak(qText);
+        }
+
+        function checkQuizAnswer(selected) {
+            if (state.quiz.answered) return;
+            state.quiz.answered = true;
+
+            const feedback = document.getElementById('quizFeedback');
+            const nextBtn = document.getElementById('nextQuestionBtn');
+            feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
+
+            if (selected === state.quiz.correct) {
+                playSound('correct');
+                addStars(1);
+                state.quiz.streak++;
+                document.getElementById('streakCount').innerText = state.quiz.streak;
+
+                feedback.classList.add('bg-emerald-100', 'text-emerald-800');
+                feedback.innerHTML = `🎉 Super Job! ${state.quiz.num1} ${state.quiz.op} ${state.quiz.num2} = ${state.quiz.correct}! ⭐ +1 Star!`;
+                speak(`Awesome! ${state.quiz.correct} is correct! You earned a star!`);
+            } else {
+                playSound('wrong');
+                state.quiz.streak = 0;
+                document.getElementById('streakCount').innerText = 0;
+
+                feedback.classList.add('bg-rose-100', 'text-rose-800');
+                feedback.innerHTML = `💡 Oops! Let's count again! The answer is ${state.quiz.correct}.`;
+                speak(`Nice try! The correct answer is ${state.quiz.correct}.`);
+            }
+
+            nextBtn.classList.remove('hidden');
+        }
+
+        /* ================= MATH PLAYGROUND LOGIC ================= */
+        function changePlaygroundCount(box, delta) {
+            playSound('click');
+            if (box === 'A') {
+                state.playground.countA = Math.max(0, Math.min(10, state.playground.countA + delta));
+            } else {
+                state.playground.countB = Math.max(0, Math.min(10, state.playground.countB + delta));
+            }
+            renderPlayground();
+        }
+
+        function renderPlayground() {
+            const toy = document.getElementById('playgroundToy').value;
+            const countA = state.playground.countA;
+            const countB = state.playground.countB;
+
+            document.getElementById('playCountA').innerText = countA;
+            document.getElementById('playCountB').innerText = countB;
+
+            // Render Box A Toys
+            const boxA = document.getElementById('playBoxA');
+            boxA.innerHTML = '';
+            for (let i = 0; i < countA; i++) {
+                boxA.innerHTML += `<span class="transform hover:scale-125 transition-transform cursor-pointer">${toy}</span>`;
+            }
+            if (countA === 0) boxA.innerHTML = '<span class="text-sm font-bold text-slate-400">Empty Box</span>';
+
+            // Render Box B Toys
+            const boxB = document.getElementById('playBoxB');
+            boxB.innerHTML = '';
+            for (let i = 0; i < countB; i++) {
+                boxB.innerHTML += `<span class="transform hover:scale-125 transition-transform cursor-pointer">${toy}</span>`;
+            }
+            if (countB === 0) boxB.innerHTML = '<span class="text-sm font-bold text-slate-400">Empty Box</span>';
+
+            // Equations Update
+            const addTotal = countA + countB;
+            document.getElementById('playAddEq').innerText = `${countA} + ${countB} = ${addTotal}`;
+
+            // Subtraction Equation (Box A - Box B if A >= B else total - countA)
+            if (countA >= countB) {
+                const subRem = countA - countB;
+                document.getElementById('playSubEq').innerText = `${countA} - ${countB} = ${subRem}`;
+            } else {
+                const subRem = addTotal - countA;
+                document.getElementById('playSubEq').innerText = `${addTotal} - ${countA} = ${subRem}`;
+            }
+        }
+
+        function speakPlaygroundEquation(type) {
+            const countA = state.playground.countA;
+            const countB = state.playground.countB;
+            if (type === 'add') {
+                speak(`${countA} plus ${countB} equals ${countA + countB}`);
+            } else {
+                if (countA >= countB) {
+                    speak(`${countA} minus ${countB} equals ${countA - countB}`);
+                } else {
+                    const total = countA + countB;
+                    speak(`${total} minus ${countA} equals ${countB}`);
+                }
+            }
+        }
+
+        /* ================= APP INIT ================= */
+        window.addEventListener('DOMContentLoaded', () => {
+            switchTab('home');
+        });
+    </script>
+</body>
+</html>
